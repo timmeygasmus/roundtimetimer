@@ -1,0 +1,146 @@
+
+const int StartButtonPin = 8;
+const int breaktimeswitchPin = 5;
+const int roundtimeswitchPin = 6;
+
+boolean breaktimestate = LOW;
+boolean roundtimestate = HIGH;
+
+long breaktimeshort = 3000;
+long breaktimelong = 6000;
+long roundtimeshort = 5000;
+long roundtimelong = 10000;
+
+
+long breaktime = 0;
+long roundtime = 0;
+long intervaltime = 0;
+
+int counter = 0;
+long lastcounter = 0;
+
+unsigned long currentMillis = 0;
+unsigned long previousMillis = 0;
+
+boolean lastStartButtonPinState = LOW;
+boolean StartState = false;
+boolean breaktone = false;
+
+
+void setup ()
+{
+  pinMode (StartButtonPin, INPUT_PULLUP);
+  pinMode (breaktimeswitchPin, INPUT_PULLUP);
+  pinMode (roundtimeswitchPin, INPUT_PULLUP);
+}
+
+
+
+
+void loop ()
+{
+  //Schalter abfragen zur Bestimmung der Zeiten
+  breaktimestate = digitalRead (breaktimeswitchPin);
+  roundtimestate = digitalRead (roundtimeswitchPin);
+  
+  if (breaktimestate == LOW)
+  {
+    breaktime = breaktimeshort;
+  }
+  else
+  {
+    breaktime = breaktimelong;
+  }
+  
+  if (roundtimestate == LOW)
+  {
+    roundtime = roundtimeshort;
+  }
+  else
+  {
+    roundtime = roundtimelong;
+  }
+  //^Schalter abfragen zur Bestimmung der Zeiten
+  
+  
+  
+  
+  //StartButton, Timer ein- und ausschalten
+  if (digitalRead(StartButtonPin) == LOW && lastStartButtonPinState == HIGH)
+  {
+    StartState = !StartState;
+    lastStartButtonPinState = LOW; 
+  }
+  else
+  {
+    lastStartButtonPinState = digitalRead(StartButtonPin);
+  }
+  //^StartButton, Timer ein- und ausschalten
+  
+  // prevMillis bei Start hochziehen, um korrekten Timer sicherzustellen
+  if (StartState != lastStartButtonPinState && StartState == 1)
+  {
+    previousMillis = millis();
+    //tone (2, 80, 100);
+  }
+  // ^^prevMillis bei Start hochziehen, um korrekten Timer sicherzustellen
+
+  if (StartState == 1)
+  {
+    currentMillis = millis();
+  }
+  else
+  {
+    counter = 0; //Counter bei StartState low auf 0 setzen
+  }
+  
+    //Aus Counter Intervaltime bestimmen
+  if (counter%2 == 0)
+  {
+    intervaltime = roundtime;
+  }
+  else
+  {
+    intervaltime = breaktime;
+  }
+  
+  //^Aus Counter Intervaltime bestimmen
+  
+  if (currentMillis - previousMillis > intervaltime)
+  {
+    previousMillis = currentMillis;
+    counter++;
+  }
+
+
+  
+
+
+
+  //Lautsprecher ansteuern für Pausengong
+
+  if (counter != lastcounter && counter != 0)
+  {
+    tone (2, 80, 500);
+  } 
+  //^Lautsprecher ansteuern für Pausengong
+
+
+
+  Serial.println(counter);
+  Serial.println(roundtimeswitchPin); 
+  Serial.println(breaktimeswitchPin);   
+  Serial.println(intervaltime);
+
+  delay(100);
+
+  //Werte zurückschreiben
+  lastcounter = counter;
+
+}
+
+
+
+
+
+
