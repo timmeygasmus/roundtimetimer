@@ -6,10 +6,10 @@ const int roundtimeswitchPin = 6;
 boolean breaktimestate = LOW;
 boolean roundtimestate = HIGH;
 
-long breaktimeshort = 3000;
-long breaktimelong = 6000;
-long roundtimeshort = 5000;
-long roundtimelong = 10000;
+long breaktimeshort = 30000;
+long breaktimelong = 60000;
+long roundtimeshort = 120000;
+long roundtimelong = 180000;
 
 
 long breaktime = 0;
@@ -81,7 +81,7 @@ void loop ()
   if (StartState != lastStartButtonPinState && StartState == 1)
   {
     previousMillis = millis();
-    //tone (2, 80, 100);
+    tone (2, 80, 100);
   }
   // ^^prevMillis bei Start hochziehen, um korrekten Timer sicherzustellen
 
@@ -124,18 +124,18 @@ void loop ()
     tone (2, 80, 500);
   } 
   //^Lautsprecher ansteuern für Pausengong
-
-
-
+ 
+  //Werte zurückschreiben
+  lastcounter = counter;
+  
+   //For debugging
   Serial.println(counter);
-  Serial.println(roundtimeswitchPin); 
-  Serial.println(breaktimeswitchPin);   
+  Serial.println(StartState); 
+  Serial.println(millis());   
   Serial.println(intervaltime);
 
   delay(100);
-
-  //Werte zurückschreiben
-  lastcounter = counter;
+  
 
 }
 
