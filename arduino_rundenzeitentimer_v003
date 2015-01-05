@@ -1,15 +1,38 @@
+const int StartButtonPin = 3;
 
-const int StartButtonPin = 8;
-const int breaktimeswitchPin = 5;
-const int roundtimeswitchPin = 6;
+const int breaktime1Pin = 4;
+const int breaktime2Pin = 5;
+const int breaktime3Pin = 6;
 
-boolean breaktimestate = LOW;
-boolean roundtimestate = HIGH;
+const int roundtime1Pin = 7;
+const int roundtime2Pin = 8;
+const int roundtime3Pin = 9;
+const int roundtime4Pin = 10;
 
-long breaktimeshort = 30000;
-long breaktimelong = 60000;
-long roundtimeshort = 120000;
-long roundtimelong = 180000;
+const int runled = 11;
+const int onled = 12;
+
+int onledstate = HIGH;
+int runledstate = LOW;
+
+
+boolean breaktime1state = HIGH;
+boolean breaktime2state = HIGH;
+boolean breaktime3state = HIGH;
+
+boolean roundtime1state = HIGH;
+boolean roundtime2state = HIGH;
+boolean roundtime3state = HIGH;
+boolean roundtime4state = HIGH;
+
+long breaktime1 = 0;
+long breaktime2 = 30000;
+long breaktime3 = 60000;
+
+long roundtime1 = 60000;
+long roundtime2 = 120000;
+long roundtime3 = 180000;
+long roundtime4 = 240000;
 
 
 long breaktime = 0;
@@ -30,8 +53,15 @@ boolean breaktone = false;
 void setup ()
 {
   pinMode (StartButtonPin, INPUT_PULLUP);
-  pinMode (breaktimeswitchPin, INPUT_PULLUP);
-  pinMode (roundtimeswitchPin, INPUT_PULLUP);
+  pinMode (breaktime1Pin, INPUT_PULLUP);
+  pinMode (breaktime2Pin, INPUT_PULLUP);
+  pinMode (breaktime3Pin, INPUT_PULLUP);
+  pinMode (roundtime1Pin, INPUT_PULLUP);
+  pinMode (roundtime2Pin, INPUT_PULLUP);
+  pinMode (roundtime3Pin, INPUT_PULLUP);
+  pinMode (roundtime4Pin, INPUT_PULLUP);
+  pinMode (onled, OUTPUT);
+  pinMode (runled, OUTPUT);
 }
 
 
@@ -39,27 +69,64 @@ void setup ()
 
 void loop ()
 {
-  //Schalter abfragen zur Bestimmung der Zeiten
-  breaktimestate = digitalRead (breaktimeswitchPin);
-  roundtimestate = digitalRead (roundtimeswitchPin);
   
-  if (breaktimestate == LOW)
+  digitalWrite (onled, onledstate);
+  
+  if (StartState != 0)
   {
-    breaktime = breaktimeshort;
+    runledstate = HIGH;
   }
   else
   {
-    breaktime = breaktimelong;
+    runledstate = LOW;
   }
   
-  if (roundtimestate == LOW)
+  digitalWrite (runled, runledstate);
+  
+  //Schalter abfragen zur Bestimmung der Zeiten, Zeiten anpassen
+  breaktime1state = digitalRead (breaktime1Pin);
+  breaktime2state = digitalRead (breaktime2Pin);
+  breaktime3state = digitalRead (breaktime3Pin);
+  
+  roundtime1state = digitalRead (roundtime1Pin);
+  roundtime2state = digitalRead (roundtime2Pin);
+  roundtime3state = digitalRead (roundtime3Pin);
+  roundtime4state = digitalRead (roundtime4Pin);
+  //^^----------------------------------------------------------
+  
+  
+  if (breaktime1state == LOW)
   {
-    roundtime = roundtimeshort;
+    breaktime = breaktime1;
   }
-  else
+  if (breaktime2state == LOW)
   {
-    roundtime = roundtimelong;
+    breaktime = breaktime2;
   }
+  
+  if (breaktime3state == LOW)
+  {
+    breaktime = breaktime3;
+  }
+
+  
+  if (roundtime1state == LOW)
+  {
+    roundtime = roundtime1;
+  }
+  if (roundtime2state == LOW)
+  {
+    roundtime = roundtime2;
+  }
+  if (roundtime3state == LOW)
+  {
+    roundtime = roundtime3;
+  }
+  if (roundtime4state == LOW)
+  {
+    roundtime = roundtime4;
+  }
+
   //^Schalter abfragen zur Bestimmung der Zeiten
   
   
@@ -117,15 +184,15 @@ void loop ()
 
 
 
-  //Lautsprecher ansteuern für Pausengong
+  //Lautsprecher ansteuern fÃ¼r Pausengong
 
   if (counter != lastcounter && counter != 0)
   {
     tone (2, 80, 500);
   } 
-  //^Lautsprecher ansteuern für Pausengong
+  //^Lautsprecher ansteuern fÃ¼r Pausengong
  
-  //Werte zurückschreiben
+  //Werte zurÃ¼ckschreiben
   lastcounter = counter;
   
    //For debugging
@@ -134,13 +201,8 @@ void loop ()
   Serial.println(millis());   
   Serial.println(intervaltime);
 
+
   delay(100);
   
 
 }
-
-
-
-
-
-
