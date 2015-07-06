@@ -1,0 +1,249 @@
+const int StartButtonPin = 3;
+
+const int breaktime1Pin = 4;
+const int breaktime2Pin = 5;
+const int breaktime3Pin = 6;
+
+const int roundtime1Pin = 7;
+const int roundtime2Pin = 8;
+const int roundtime3Pin = 9;
+const int roundtime4Pin = 10;
+
+const int led = 13;
+
+int ledmode = 0; 
+int ledState = LOW;
+int brightness = 0;
+int fadeAmount = 5;  
+
+boolean breaktime1state = HIGH;
+boolean breaktime2state = HIGH;
+boolean breaktime3state = HIGH;
+
+boolean roundtime1state = HIGH;
+boolean roundtime2state = HIGH;
+boolean roundtime3state = HIGH;
+boolean roundtime4state = HIGH;
+
+long breaktime1 = 0;
+long breaktime2 = 30000;
+long breaktime3 = 60000;
+
+long roundtime1 = 60000;
+long roundtime2 = 120000;
+long roundtime3 = 180000;
+long roundtime4 = 240000;
+
+
+long breaktime = 0;
+long roundtime = 0;
+long intervaltime = 0;
+long blinkinterval = 500;
+long previousBlinkMillis = 0;
+long currentBlinkMillis = 0;
+
+int counter = 0;
+long lastcounter = 0;
+
+unsigned long currentMillis = 0;
+unsigned long previousMillis = 0;
+
+boolean lastStartButtonPinState = LOW;
+boolean StartState = false;
+boolean breaktone = false;
+
+
+void setup ()
+{
+  pinMode (StartButtonPin, INPUT_PULLUP);
+  pinMode (breaktime1Pin, INPUT_PULLUP);
+  pinMode (breaktime2Pin, INPUT_PULLUP);
+  pinMode (breaktime3Pin, INPUT_PULLUP);
+  pinMode (roundtime1Pin, INPUT_PULLUP);
+  pinMode (roundtime2Pin, INPUT_PULLUP);
+  pinMode (roundtime3Pin, INPUT_PULLUP);
+  pinMode (roundtime4Pin, INPUT_PULLUP);
+  pinMode (led, OUTPUT);
+}
+
+
+
+
+void loop ()
+{
+  int Batteriespannung = analogRead(A0);
+  
+  
+ //Betriebsart der LED bestimmen 
+  if ((Batteriespannung > 653) && (StartState = 0))
+  {
+    ledmode = 1;
+  }
+  
+  if ((Batteriespannung <653) && (StartState = 0))
+  {
+   ledmode = 3;
+  }
+  
+  if (StartState != 0)
+  {
+    ledmode = 2;
+  }
+  //^^
+  
+  //Schalter abfragen zur Bestimmung der Zeiten, Zeiten anpassen
+  breaktime1state = digitalRead (breaktime1Pin);
+  breaktime2state = digitalRead (breaktime2Pin);
+  breaktime3state = digitalRead (breaktime3Pin);
+  
+  roundtime1state = digitalRead (roundtime1Pin);
+  roundtime2state = digitalRead (roundtime2Pin);
+  roundtime3state = digitalRead (roundtime3Pin);
+  roundtime4state = digitalRead (roundtime4Pin);
+  //^^----------------------------------------------------------
+  
+  
+  if (breaktime1state == LOW)
+  {
+    breaktime = breaktime1;
+  }
+  if (breaktime2state == LOW)
+  {
+    breaktime = breaktime2;
+  }
+  
+  if (breaktime3state == LOW)
+  {
+    breaktime = breaktime3;
+  }
+
+  
+  if (roundtime1state == LOW)
+  {
+    roundtime = roundtime1;
+  }
+  if (roundtime2state == LOW)
+  {
+    roundtime = roundtime2;
+  }
+  if (roundtime3state == LOW)
+  {
+    roundtime = roundtime3;
+  }
+  if (roundtime4state == LOW)
+  {
+    roundtime = roundtime4;
+  }
+
+  //^Schalter abfragen zur Bestimmung der Zeiten
+  
+  
+  
+  
+  //StartButton, Timer ein- und ausschalten
+  if (digitalRead(StartButtonPin) == LOW && lastStartButtonPinState == HIGH)
+  {
+    StartState = !StartState;
+    lastStartButtonPinState = LOW; 
+  }
+  else
+  {
+    lastStartButtonPinState = digitalRead(StartButtonPin);
+  }
+  //^StartButton, Timer ein- und ausschalten
+  
+  // prevMillis bei Start hochziehen, um korrekten Timer sicherzustellen
+  if (StartState != lastStartButtonPinState && StartState == 1)
+  {
+    previousMillis = millis();
+    tone (2, 80, 100);
+  }
+  // ^^prevMillis bei Start hochziehen, um korrekten Timer sicherzustellen
+
+  if (StartState == 1)
+  {
+    currentMillis = millis();
+  }
+  else
+  {
+    counter = 0; //Counter bei StartState low auf 0 setzen
+  }
+  
+    //Aus Counter Intervaltime bestimmen
+  if (counter%2 == 0)
+  {
+    intervaltime = roundtime;
+  }
+  else
+  {
+    intervaltime = breaktime;
+  }
+  
+  //^Aus Counter Intervaltime bestimmen
+  
+  if (currentMillis - previousMillis > intervaltime)
+  {
+    previousMillis = currentMillis;
+    counter++;
+  }
+
+  //LED ansteuern nach Betriebsart
+  
+  switch(ledmode)
+  {
+  
+    case 1:
+    ledState = HIGH; 
+    digitalWrite (led, ledState);
+    break;
+  
+    case 2:
+    if(currentBlinkMillis - previousBlinkMillis > blinkinterval)
+    { 
+      previousBlinkMillis = currentBlinkMillis;   
+      if (ledState == LOW)
+      ledState = HIGH;
+      else
+      ledState = LOW;
+      digitalWrite(led, ledState);
+    }
+    break;
+    
+    case 3:
+    analogWrite(led, brightness);    
+    brightness = brightness + fadeAmount;
+    if (brightness == 0 || brightness == 255)
+    {
+      fadeAmount = -fadeAmount; 
+    }     
+    break;
+  }
+   
+  //^^LED ansteuern nach Betriebsart
+
+
+
+  //Lautsprecher ansteuern fÃ¼r Pausengong
+
+  if (counter != lastcounter && counter != 0)
+  {
+    tone (2, 80, 500);
+  } 
+  //^Lautsprecher ansteuern fÃ¼r Pausengong
+ 
+  //Werte zurÃ¼ckschreiben
+  lastcounter = counter;
+  
+   //For debugging
+  Serial.println(counter);
+  Serial.println(StartState); 
+  Serial.println(millis());   
+  Serial.println(intervaltime);
+  Serial.println(ledmode);
+  
+
+
+  //delay(100);
+  
+
+}
