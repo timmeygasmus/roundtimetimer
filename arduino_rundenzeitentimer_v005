@@ -14,7 +14,7 @@ const int led = 13;
 int ledmode = 0; 
 int ledState = LOW;
 int brightness = 0;
-int fadeAmount = 5;  
+int fadeAmount = 1;  
 
 boolean breaktime1state = HIGH;
 boolean breaktime2state = HIGH;
@@ -71,16 +71,17 @@ void setup ()
 
 void loop ()
 {
+  unsigned long currentBlinkMillis = millis();
   int Batteriespannung = analogRead(A0);
   
   
  //Betriebsart der LED bestimmen 
-  if ((Batteriespannung > 653) && (StartState = 0))
+  if ((Batteriespannung > 653) && (StartState == 0))
   {
     ledmode = 1;
   }
   
-  if ((Batteriespannung <653) && (StartState = 0))
+  if ((Batteriespannung <653) && (StartState == 0))
   {
    ledmode = 3;
   }
@@ -198,6 +199,7 @@ void loop ()
     break;
   
     case 2:
+    
     if(currentBlinkMillis - previousBlinkMillis > blinkinterval)
     { 
       previousBlinkMillis = currentBlinkMillis;   
@@ -227,7 +229,7 @@ void loop ()
 
   if (counter != lastcounter && counter != 0)
   {
-    tone (2, 80, 500);
+    tone (2, 1200, 500);
   } 
   //^Lautsprecher ansteuern fÃ¼r Pausengong
  
@@ -235,9 +237,9 @@ void loop ()
   lastcounter = counter;
   
    //For debugging
-  Serial.println(counter);
-  Serial.println(StartState); 
-  Serial.println(millis());   
+  Serial.println(millis());
+  Serial.println(brightness);
+  Serial.println(StartState);    
   Serial.println(intervaltime);
   Serial.println(ledmode);
   
