@@ -11,9 +11,9 @@ const int roundtime4Pin = 10;
 
 const int led = 13;
 
-int ledmode = 0; 
-int ledState = LOW;
-int brightness = 0;
+unsigned int ledmode = 0; 
+unsigned int ledState = LOW;
+unsigned int brightness = 0;
 int fadeAmount = 1;  
 
 boolean breaktime1state = HIGH;
@@ -25,27 +25,27 @@ boolean roundtime2state = HIGH;
 boolean roundtime3state = HIGH;
 boolean roundtime4state = HIGH;
 
-long breaktime1 = 0;
-long breaktime2 = 30000;
-long breaktime3 = 60000;
+unsigned long breaktime1 = 0;
+unsigned long breaktime2 = 30000;
+unsigned long breaktime3 = 60000;
 
-long roundtime1 = 60000;
-long roundtime2 = 120000;
-long roundtime3 = 180000;
-long roundtime4 = 240000;
+unsigned long roundtime1 = 60000;
+unsigned long roundtime2 = 120000;
+unsigned long roundtime3 = 180000;
+unsigned long roundtime4 = 240000;
 
 
-long lastroundtime = 0;
-long lastbreaktime = 0;
-long breaktime = 0;
-long roundtime = 0;
-long intervaltime = 0;
-long blinkinterval = 500;
-long previousBlinkMillis = 0;
-long currentBlinkMillis = 0;
+unsigned long lastroundtime = 0;
+unsigned long lastbreaktime = 0;
+unsigned long breaktime = 0;
+unsigned long roundtime = 0;
+unsigned long intervaltime = 0;
+unsigned long previousBlinkMillis = 0;
+unsigned long currentBlinkMillis = 0;
+unsigned int blinkinterval = 500;
 
-int counter = 0;
-long lastcounter = 0;
+unsigned int counter = 0;
+unsigned int lastcounter = 0;
 
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
@@ -74,7 +74,7 @@ void setup ()
 void loop ()
 {
   unsigned long currentBlinkMillis = millis();
-  int Batteriespannung = analogRead(A0);
+  unsigned int Batteriespannung = analogRead(A0);
   
   
  /*
