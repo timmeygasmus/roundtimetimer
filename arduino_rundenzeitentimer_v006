@@ -82,13 +82,13 @@ void loop ()
  */
    
    // Betriebsbereit
-  if ((Batteriespannung > 660) && (StartState == 0))
+  if ((Batteriespannung > 705) && (StartState == 0))
   {
     ledmode = 1;
   }
   
     //Betriebsbereit, Akku schwach
-  if ((Batteriespannung <660) && (StartState == 0))
+  if ((Batteriespannung <705) && (StartState == 0))
   {
    ledmode = 3;
   }
